@@ -10,7 +10,7 @@ namespace DownloadsOrganize
         public static void Main(string[] args)
         {
             Console.Write("Paste path to folder you want to organize: ");
-            path = Console.ReadLine();
+            path = Console.ReadLine() ;
             Console.WriteLine("\nOrganizing folder...");
             OrganizeFolder();
         }
@@ -23,7 +23,7 @@ namespace DownloadsOrganize
             {
                 preFiles.Add(file);
                 var ext = Path.GetExtension(file);
-                if (extensions.Contains(ext)) continue;
+                if (extensions.Contains(ext) || !Path.HasExtension(file)) continue;
                 extensions.Add(ext);
             }
             foreach (var ext in extensions)
@@ -34,7 +34,8 @@ namespace DownloadsOrganize
             }
             foreach (var file in preFiles)
             {
-                if (File.Exists($@"{path}/{Path.GetExtension(file).Substring(1)}")) continue; 
+                
+                if ( !Path.HasExtension(file) || File.Exists($@"{path}/{Path.GetExtension(file).Substring(1)}")) continue; 
                 
                 Console.WriteLine($@"{path}/{Path.GetExtension(file).Substring(1)}/{Path.GetFileName(file)}");
                 
