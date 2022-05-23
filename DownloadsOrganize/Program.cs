@@ -12,6 +12,12 @@ namespace DownloadsOrganize
         private static string path;
         public static void Main(string[] args)
         {
+            if(args[0])
+            {
+              if(Directory.Exists(args[0]))
+              { path = args[0]; OrganizeFolder();
+
+            }
             Console.Write("Paste path to folder you want to organize: ");
             path = Console.ReadLine() + '\\' ;
             Console.WriteLine("\nOrganizing folder...");
