@@ -31,11 +31,14 @@ namespace DownloadsOrganize
                 if (Directory.Exists($@"{path}/{ext.Substring(1)}")) continue;
                 
                 Directory.CreateDirectory($@"{path}/{ext.Substring(1)}");
+                Directory.CreateDirectory($@"{path}/misc");
             }
             foreach (var file in preFiles)
             {
-                
-                if ( !Path.HasExtension(file) || File.Exists($@"{path}/{Path.GetExtension(file).Substring(1)}")) continue; 
+                if(!Path.HasExtension(file)){ File.Move(file, $@"{path}/misc");
+                    continue;
+                }
+                if ( File.Exists($@"{path}/{Path.GetExtension(file).Substring(1)}")) continue; 
                 
                 Console.WriteLine($@"{path}/{Path.GetExtension(file).Substring(1)}/{Path.GetFileName(file)}");
                 
