@@ -10,7 +10,7 @@ namespace DownloadsOrganize
         public static void Main(string[] args)
         {
             Console.Write("Paste path to folder you want to organize: ");
-            path = Console.ReadLine() ;
+            path = Console.ReadLine() + '\\' ;
             Console.WriteLine("\nOrganizing folder...");
             OrganizeFolder();
         }
