@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 
 namespace DownloadsOrganize
 {
@@ -44,6 +47,13 @@ namespace DownloadsOrganize
                 
                 File.Move(file, $@"{path}/{Path.GetExtension(file).Substring(1)}/{Path.GetFileName(file)}");
                 File.Delete(file);
+            }
+            Console.WriteLine("Press anykey to continue, or enter redo to go again.");
+            switch (Console.ReadLine()?.ToLower())
+            {
+                case "redo": Main(null);
+                    break;
+                default: System.Environment.Exit(0); break;
             }
         }
     }
