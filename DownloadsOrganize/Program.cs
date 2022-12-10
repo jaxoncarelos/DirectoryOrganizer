@@ -13,12 +13,12 @@ namespace DownloadsOrganize
         {
             if(args.Length > 0 && args[0] != null)
             {
-              if(Directory.Exists(args[0]))
-              { path = args[0]; OrganizeFolder(); }
+                if(Directory.Exists(args[0])) path = args[0]; OrganizeFolder();
             }
             Console.Write("Paste path to folder you want to organize: ");
             path = Console.ReadLine() + '\\' ;
             Console.WriteLine("1: Advanced Organization (File extensions)\n2: MIME Organization (File type)");
+            Console.Write("Choice: ");
             var option = Console.ReadLine();
             switch (option)
             {
@@ -87,7 +87,9 @@ namespace DownloadsOrganize
             }
             foreach (var file in preFiles)
             {
-                if(!Path.HasExtension(file)){ File.Move(file, $@"{path}/misc");
+                if(!Path.HasExtension(file))
+                { 
+                    File.Move(file, $@"{path}/misc");
                     continue;
                 }
                 if ( File.Exists($@"{path}\{Path.GetExtension(file).Substring(1)}")) continue; 
@@ -97,12 +99,15 @@ namespace DownloadsOrganize
                 File.Move(file, $@"{path}\{Path.GetExtension(file).Substring(1)}\{Path.GetFileName(file)}");
                 File.Delete(file);
             }
-            Console.WriteLine("Press anykey to continue, or enter redo to go again.");
+            
+            Console.WriteLine("Press any key to continue, or enter redo to go again.");
             switch (Console.ReadLine()?.ToLower())
             {
                 case "redo": Main(null);
                     break;
-                default: System.Environment.Exit(0); break;
+                default: 
+                    System.Environment.Exit(0);
+                    break;
             }
         }
     }
