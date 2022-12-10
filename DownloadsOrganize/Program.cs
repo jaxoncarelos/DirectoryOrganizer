@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MimeMapping;
@@ -10,7 +9,7 @@ namespace DownloadsOrganize
     {
         public static void Main(string[] args)
         {
-            string path = "";
+            var path = "";
             if(args.Length > 0 && args[0] != null)
             {
                 if (Directory.Exists(args[0])) path = args[0];
@@ -34,7 +33,7 @@ namespace DownloadsOrganize
 
         private static void OrganizeFolder(string path, string option)
         {
-            string miscLoc = Path.Combine(path, "misc");
+            var miscLoc = Path.Combine(path, "misc");
             foreach (var file in Directory.GetFiles(path))
             {
                 if (Path.GetExtension(file) == ".url") continue;
@@ -50,10 +49,10 @@ namespace DownloadsOrganize
                 PathUtil.MoveAndDeleteFile(file, goalPath);
             }
 
-            redoOption();
+            RedoOption();
         }
 
-        public static void redoOption()
+        public static void RedoOption()
         {
             Console.WriteLine("Press any key to continue, or enter redo to go again.");
             switch (Console.ReadLine()?.ToLower())
