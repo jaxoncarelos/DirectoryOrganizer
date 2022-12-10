@@ -9,7 +9,7 @@ namespace DownloadsOrganize
         {
             if (!Directory.Exists(goalPath)) Directory.CreateDirectory(goalPath);
             Console.WriteLine($@"Moving {Path.GetFileName(file)} to {goalPath}");
-            File.Move(file, $@"{goalPath}\{Path.GetFileName(file)}");
+            File.Move(file, Path.Combine(goalPath, Path.GetFileName(file)));
             File.Delete(file);
         }
     }
