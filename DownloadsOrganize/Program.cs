@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Linq;
 using MimeMapping;
 
 namespace DownloadsOrganize
@@ -13,100 +13,50 @@ namespace DownloadsOrganize
         {
             if(args.Length > 0 && args[0] != null)
             {
-                if(Directory.Exists(args[0])) path = args[0]; OrganizeFolder();
+                if(Directory.Exists(args[0])) path = args[0]; OrganizeFolder("1");
             }
             Console.Write("Paste path to folder you want to organize: ");
             path = Console.ReadLine() + '\\' ;
+            
             Console.WriteLine("1: Advanced Organization (File extensions)\n2: MIME Organization (File type)");
             Console.Write("Choice: ");
-            var option = Console.ReadLine();
-            switch (option)
-            {
-                case "1":
-                    OrganizeFolder();
-                    break;
-                case "2":
-                    OrganizeMime();
-                    break;
-            }
-        }
-
-        private static void OrganizeMime()
-        {
-            List<string> MIMETypes = new List<string>();
-            List<string> preFiles = new List<string>();
-            foreach (var file in Directory.GetFiles(path))
-            {
-                preFiles.Add(file);
-                var mime = MimeMapping.MimeUtility.GetMimeMapping(file);
-                if (MIMETypes.Contains(mime)) continue;
-                MIMETypes.Add(mime);
-            }
-
-            foreach (var type in MIMETypes)
-            {
-                var path1 = $@"{path}\{type.Split('/')[0]}";
-                if (Directory.Exists(path1)) continue;
-                
-                Directory.CreateDirectory(path1);
-                Directory.CreateDirectory($@"{path}/misc");
-            }
-
-            foreach (var file in preFiles)
-            {
-                
-                var pathL = $@"{path}{MimeMapping.MimeUtility.GetMimeMapping(file).Split('/')[0]}";
-                if ( File.Exists(pathL)) continue;
-                Console.WriteLine($@"{pathL}\{Path.GetFileName(file)}");
-                if (MimeUtility.GetMimeMapping(file) == MimeUtility.UnknownMimeType){ File.Move(file, $@"{path}/misc\{Path.GetFileName(file)}"); continue;} 
-                
-                
-                File.Move(file, $@"{pathL}\{Path.GetFileName(file)}");
-                File.Delete(file);
-            }
             
-        }
+            var option = Console.ReadLine();
+            if (new []{"1", "2"}.Contains(option)) OrganizeFolder(option);
 
-        private static void OrganizeFolder()
+        }
+        
+
+        private static void OrganizeFolder(string option)
         {
-            List<string> extensions = new List<string>();
-            List<string> preFiles = new List<string>();
+            if( !Directory.Exists($@"{path}/misc")) Directory.CreateDirectory($@"{path}/misc");
+            
             foreach (var file in Directory.GetFiles(path))
             {
-                preFiles.Add(file);
-                var ext = Path.GetExtension(file);
-                if (extensions.Contains(ext) || !Path.HasExtension(file)) continue;
-                extensions.Add(ext);
-            }
-            foreach (var ext in extensions)
-            {
-                if (Directory.Exists($@"{path}\{ext.Substring(1)}")) continue;
-                
-                Directory.CreateDirectory($@"{path}\{ext.Substring(1)}");
-                Directory.CreateDirectory($@"{path}/misc");
-            }
-            foreach (var file in preFiles)
-            {
-                if(!Path.HasExtension(file))
-                { 
-                    File.Move(file, $@"{path}/misc");
+                if (Path.GetExtension(file) == ".url") continue;
+                if (!Path.HasExtension(file))
+                {
+                    File.Move(file, $@"{path}/misc/{Path.GetFileName(file)}");
                     continue;
                 }
-                if ( File.Exists($@"{path}\{Path.GetExtension(file).Substring(1)}")) continue; 
+                var ext = (option == "1" ? Path.GetExtension(file).Substring(1) : MimeUtility.GetMimeMapping(file));
+                var goalPath = $@"{path}{ext}";
                 
-                Console.WriteLine($@"{path}\{Path.GetExtension(file).Substring(1)}\{Path.GetFileName(file)}");
-                
-                File.Move(file, $@"{path}\{Path.GetExtension(file).Substring(1)}\{Path.GetFileName(file)}");
-                File.Delete(file);
+                PathUtil.MoveAndDeleteFile(file, goalPath);
             }
-            
+
+            redoOption();
+        }
+
+        public static void redoOption()
+        {
             Console.WriteLine("Press any key to continue, or enter redo to go again.");
             switch (Console.ReadLine()?.ToLower())
             {
                 case "redo": Main(null);
                     break;
                 default: 
-                    System.Environment.Exit(0);
+                    Environment.Exit(0);
                     break;
             }
         }
